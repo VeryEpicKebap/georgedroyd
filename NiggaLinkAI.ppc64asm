@@ -1,0 +1,30 @@
+.section .data
+msg:
+    .asciz "hello world"
+
+    .section .text
+    .global _start
+
+_start:
+    lis     r3, msg@ha
+    addi    r3, r3, msg@l
+    lis     r4, 0x1000       
+    ori     r4, r4, 0x0000
+
+next_char:
+    lbz     r5, 0(r3)
+    cmpwi   r5, 0
+    beq     done
+
+wait_tx:
+    lbz     r6, 5(r4)         
+    rlwinm  r6, r6, 0, 0, 0   
+    cmpwi   r6, 0
+    beq     wait_tx
+
+    stb     r5, 0(r4)         
+    addi    r3, r3, 1
+    b       next_char
+
+done:
+    b       done           
